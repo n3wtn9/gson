@@ -829,6 +829,46 @@ public class JsonReader implements Closeable {
     return result;
   }
 
+  public String nextStringObject() throws IOException {
+    int p = peeked;
+    if (p == PEEKED_NONE) {
+      p = doPeek();
+    }
+
+    String result;
+    if (p == PEEKED_BEGIN_OBJECT) {
+      push(JsonScope.EMPTY_OBJECT);
+      peeked = PEEKED_NONE;
+
+      StringBuilder sb = new StringBuilder();
+      sb.append('{');
+      int count = 1;
+
+      do {
+        if (pos == limit && !fillBuffer(1))
+          throw syntaxError("Unterminated string");
+
+        if (buffer[pos] == '{')
+          count++;
+        else if(buffer[pos] == '}')
+          count--;
+
+        sb.append(buffer[pos++]);
+      } while (count != 0);
+
+      stackSize--;
+      pathNames[stackSize] = null; // Free the last path name so that it can be garbage collected!
+      pathIndices[stackSize - 1]++;
+      peeked = PEEKED_NONE;
+
+      result = sb.toString();
+    } else {
+      throw new IllegalStateException("Expected BEGIN_OBJECT but was " + peek() + locationString());
+    }
+
+    return result;
+  }
+
   /**
    * Returns the {@link com.google.gson.stream.JsonToken#BOOLEAN boolean} value of the next token,
    * consuming it.

@@ -1729,6 +1729,22 @@ public final class JsonReaderTest extends TestCase {
     }
   }
 
+  public void testStringObject() throws IOException {
+    JsonReader reader = new JsonReader(reader("{\"name\":{\"name\":\"string\"}}"));
+    reader.beginObject();
+    System.out.println(reader.nextName());
+    System.out.println(reader.peek());
+    System.out.println(reader.nextStringObject());
+    System.out.println(reader.peek());
+//    reader.beginObject();
+//    reader.nextName();
+//    System.out.println(reader.peek());
+//    reader.nextString();
+//    System.out.println(reader.peek());
+//    reader.endObject();
+//    System.out.println(reader.peek());
+  }
+
   private void assertDocument(String document, Object... expectations) throws IOException {
     JsonReader reader = new JsonReader(reader(document));
     reader.setLenient(true);
