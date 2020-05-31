@@ -104,9 +104,9 @@ import com.google.gson.stream.JsonWriter;
  * registered. This protects your application from injection attacks. If you
  * don't supply an explicit type label, the type's simple name will be used.
  * <pre>   {@code
- *   shapeAdapter.registerSubtype(Rectangle.class, "Rectangle");
- *   shapeAdapter.registerSubtype(Circle.class, "Circle");
- *   shapeAdapter.registerSubtype(Diamond.class, "Diamond");
+ *   shapeAdapterFactory.registerSubtype(Rectangle.class, "Rectangle");
+ *   shapeAdapterFactory.registerSubtype(Circle.class, "Circle");
+ *   shapeAdapterFactory.registerSubtype(Diamond.class, "Diamond");
  * }</pre>
  * Finally, register the type adapter factory in your application's GSON builder:
  * <pre>   {@code
@@ -119,6 +119,18 @@ import com.google.gson.stream.JsonWriter;
  *       .registerSubtype(Rectangle.class)
  *       .registerSubtype(Circle.class)
  *       .registerSubtype(Diamond.class);
+ * }</pre>
+ *
+ * <h3>Serialization and deserialization</h3>
+ * In order to serialize and deserialize a polymorphic object,
+ * you must specify the base type explicitly.
+ * <pre>   {@code
+ *   Diamond diamond = new Diamond();
+ *   String json = gson.toJson(diamond, Shape.class);
+ * }</pre>
+ * And then:
+ * <pre>   {@code
+ *   Shape shape = gson.fromJson(json, Shape.class);
  * }</pre>
  */
 public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
